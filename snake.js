@@ -20,6 +20,32 @@ class Direction {
   turnLeft() {
     this.heading = (this.heading + 1) % 4;
   }
+
+  turnRight() {
+    for (let turn = 0; turn < 3; turn++) {
+      this.turnLeft();
+    }
+  }
+
+  turnUp() {
+    if (this.heading == EAST) {
+      this.turnLeft();
+    }
+
+    if (this.heading == WEST) {
+      this.turnRight();
+    }
+  }
+
+  turnDown() {
+    if (this.heading == EAST) {
+      this.turnRight();
+    }
+
+    if (this.heading == WEST) {
+      this.turnLeft();
+    }
+  }
 }
 
 class Snake {
@@ -40,6 +66,18 @@ class Snake {
 
   turnLeft() {
     this.direction.turnLeft();
+  }
+
+  turnRight() {
+    this.direction.turnRight();
+  }
+
+  turnUp() {
+    this.direction.turnUp();
+  }
+
+  turnDown() {
+    this.direction.turnDown();
   }
 
   move() {
@@ -109,7 +147,23 @@ const drawFood = function(food) {
 };
 
 const handleKeyPress = snake => {
-  snake.turnLeft();
+  switch (event.key) {
+    case 'ArrowLeft':
+      snake.turnLeft();
+      break;
+
+    case 'ArrowRight':
+      snake.turnRight();
+      break;
+
+    case 'ArrowUp':
+      snake.turnUp();
+      break;
+
+    case 'ArrowDown':
+      snake.turnDown();
+      break;
+  }
 };
 
 const moveAndDrawSnake = function(snake) {
@@ -160,7 +214,7 @@ const main = function() {
   setInterval(() => {
     let x = Math.random() * 100;
     if (x > 50) {
-      ghostSnake.turnLeft();
+      ghostSnake.turn('left');
     }
   }, 500);
 };
