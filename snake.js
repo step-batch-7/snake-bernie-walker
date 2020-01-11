@@ -52,6 +52,16 @@ class Snake {
   }
 }
 
+class Food {
+  constructor(position) {
+    this.position = position;
+  }
+
+  get location() {
+    return this.position;
+  }
+}
+
 const NUM_OF_COLS = 100;
 const NUM_OF_ROWS = 60;
 
@@ -80,7 +90,7 @@ const createGrids = function() {
 };
 
 const eraseTail = function(snake) {
-  let [colId, rowId] = snake.previousTail;
+  const [colId, rowId] = snake.previousTail;
   const cell = getCell(colId, rowId);
   cell.classList.remove(snake.species);
 };
@@ -90,6 +100,12 @@ const drawSnake = function(snake) {
     const cell = getCell(colId, rowId);
     cell.classList.add(snake.species);
   });
+};
+
+const drawFood = function(food) {
+  const [colId, rowId] = food.location;
+  const cell = getCell(colId, rowId);
+  cell.classList.add('food');
 };
 
 const handleKeyPress = snake => {
@@ -128,9 +144,13 @@ const main = function() {
   );
 
   attachEventListeners(snake);
+
   createGrids();
   drawSnake(snake);
   drawSnake(ghostSnake);
+
+  const food = new Food([9, 9]);
+  drawFood(food);
 
   setInterval(() => {
     moveAndDrawSnake(snake);
