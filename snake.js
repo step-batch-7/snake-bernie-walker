@@ -4,21 +4,24 @@ const WEST = 2;
 const SOUTH = 3;
 
 class Direction {
+  #heading;
+  #deltas;
+
   constructor(initialHeading) {
-    this.heading = initialHeading;
-    this.deltas = {};
-    this.deltas[EAST] = [1, 0];
-    this.deltas[WEST] = [-1, 0];
-    this.deltas[NORTH] = [0, -1];
-    this.deltas[SOUTH] = [0, 1];
+    this.#heading = initialHeading;
+    this.#deltas = {};
+    this.#deltas[EAST] = [1, 0];
+    this.#deltas[WEST] = [-1, 0];
+    this.#deltas[NORTH] = [0, -1];
+    this.#deltas[SOUTH] = [0, 1];
   }
 
   get delta() {
-    return this.deltas[this.heading];
+    return this.#deltas[this.#heading];
   }
 
   turnLeft() {
-    this.heading = (this.heading + 1) % 4;
+    this.#heading = (this.#heading + 1) % 4;
   }
 
   turnRight() {
@@ -28,75 +31,115 @@ class Direction {
   }
 
   turnUp() {
-    if (this.heading == EAST) {
+    if (this.#heading == EAST) {
       this.turnLeft();
     }
 
-    if (this.heading == WEST) {
+    if (this.#heading == WEST) {
       this.turnRight();
     }
   }
 
   turnDown() {
-    if (this.heading == EAST) {
+    if (this.#heading == EAST) {
       this.turnRight();
     }
 
-    if (this.heading == WEST) {
+    if (this.#heading == WEST) {
       this.turnLeft();
     }
   }
 }
 
 class Snake {
+  #positions;
+  #direction;
+  #type;
+  #previousTail;
+
   constructor(positions, direction, type) {
-    this.positions = positions.slice();
-    this.direction = direction;
-    this.type = type;
-    this.previousTail = [0, 0];
+    this.#positions = positions.slice();
+    this.#direction = direction;
+    this.#type = type;
+    this.#previousTail = [0, 0];
   }
 
   get location() {
-    return this.positions.slice();
+    return this.#positions.slice();
   }
 
   get species() {
-    return this.type;
+    return this.#type;
+  }
+
+  get pastTail() {
+    return this.#previousTail;
   }
 
   turnLeft() {
-    this.direction.turnLeft();
+    this.#direction.turnLeft();
   }
 
   turnRight() {
-    this.direction.turnRight();
+    this.#direction.turnRight();
   }
 
   turnUp() {
-    this.direction.turnUp();
+    this.#direction.turnUp();
   }
 
   turnDown() {
-    this.direction.turnDown();
+    this.#direction.turnDown();
   }
 
   move() {
-    const [headX, headY] = this.positions[this.positions.length - 1];
-    this.previousTail = this.positions.shift();
+    const [headX, headY] = this.#positions[this.#positions.length - 1];
+    this.#previousTail = this.#positions.shift();
 
-    const [deltaX, deltaY] = this.direction.delta;
+    const [deltaX, deltaY] = this.#direction.delta;
 
-    this.positions.push([headX + deltaX, headY + deltaY]);
+    this.#positions.push([headX + deltaX, headY + deltaY]);
   }
 }
 
 class Food {
+  #position;
   constructor(position) {
-    this.position = position;
+    this.#position = position;
   }
 
   get location() {
-    return this.position;
+    return this.#position;
+  }
+}
+
+class Game {
+  #snake;
+  #food;
+  #height;
+  #breadth;
+
+  constructor([breadth, height], snake, food) {
+    this.#snake = snake;
+    this.#height = height;
+    this.#breadth = breadth;
+    this.#food = food;
+  }
+  get snake() {
+    return this.#snake;
+  }
+
+  get food() {
+    return this.#food;
+  }
+
+  navigateSnake(dir) {
+    const turnTo = `turn${dir[0].toUpperCase() + dir.slice(1)}`;
+    this.#snake[turnTo]();
+  }
+
+  moveSnake() {
+    this.#snake.move();
   }
 }
 
@@ -119,7 +162,7 @@ const createCell = function(grid, colId, rowId) {
 };
 
 const eraseTail = function(snake) {
-  const [colId, rowId] = snake.previousTail;
+  const [colId, rowId] = snake.pastTail;
   const cell = getCell(colId, rowId);
   cell.classList.remove(snake.species);
 };
@@ -137,22 +180,33 @@ const drawSnake = function(snake) {
   });
 };
 
+const moveAndDrawGhost = function(ghostSnake) {
+  ghostSnake.move();
+  eraseTail(ghostSnake);
+  drawSnake(ghostSnake);
+};
+
 const randomlyMoveGhost = ghostSnake => {
   let x = Math.random() * 100;
   if (x > 50) {
     ghostSnake.turnLeft();
   }
+  moveAndDrawGhost(ghostSnake);
 };
 
-const moveAndDrawSnake = function(snake) {
-  snake.move();
-  eraseTail(snake);
-  drawSnake(snake);
+const moveAndDrawSnake = function(game) {
+  game.moveSnake();
+  eraseTail(game.snake);
+  drawSnake(game.snake);
 };
 
-const reDrawBoard = function(snake, ghostSnake) {
-  moveAndDrawSnake(snake);
-  moveAndDrawSnake(ghostSnake);
+const reDrawBoard = function(game) {
+  moveAndDrawSnake(game);
+};
+
+const drawBoard = function(game) {
+  drawSnake(game.snake);
+  drawFood(game.food);
 };
 
 const createGrids = function() {
@@ -164,35 +218,34 @@ const createGrids = function() {
   }
 };
 
-const initBoard = function(snake, ghostSnake, food) {
+const initBoard = function(game, ghostSnake) {
   createGrids();
-  drawSnake(snake);
   drawSnake(ghostSnake);
-  drawFood(food);
+  drawBoard(game);
 };
 
-const handleKeyPress = snake => {
+const handleKeyPress = game => {
   switch (event.key) {
     case 'ArrowLeft':
-      snake.turnLeft();
+      game.navigateSnake('left');
       break;
 
     case 'ArrowRight':
-      snake.turnRight();
+      game.navigateSnake('right');
       break;
 
     case 'ArrowUp':
-      snake.turnUp();
+      game.navigateSnake('up');
       break;
 
     case 'ArrowDown':
-      snake.turnDown();
+      game.navigateSnake('down');
       break;
   }
 };
 
-const attachEventListeners = snake => {
-  document.body.onkeydown = handleKeyPress.bind(null, snake);
+const attachEventListeners = game => {
+  document.body.onkeydown = handleKeyPress.bind(null, game);
 };
 
 const main = function() {
@@ -218,11 +271,13 @@ const main = function() {
 
   const food = new Food([9, 9]);
 
-  attachEventListeners(snake);
+  const game = new Game([100, 60], snake, food);
 
-  initBoard(snake, ghostSnake, food);
+  attachEventListeners(game);
 
-  setInterval(reDrawBoard, 200, snake, ghostSnake);
+  initBoard(game, ghostSnake);
+
+  setInterval(reDrawBoard, 200, game);
 
   setInterval(randomlyMoveGhost, 500, ghostSnake);
 };
