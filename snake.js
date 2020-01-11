@@ -214,7 +214,7 @@ const main = function() {
   setInterval(() => {
     let x = Math.random() * 100;
     if (x > 50) {
-      ghostSnake.turn('left');
+      ghostSnake.turnLeft();
     }
   }, 500);
 };
