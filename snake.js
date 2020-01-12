@@ -103,6 +103,10 @@ class Snake {
 
     this.#positions.push([headX + deltaX, headY + deltaY]);
   }
+
+  retainTail() {
+    this.#positions.unshift(this.#previousTail);
+  }
 }
 
 class Food {
@@ -113,6 +117,10 @@ class Food {
 
   get location() {
     return this.#position;
+  }
+
+  set location(newCoords) {
+    this.#position = newCoords;
   }
 }
 
@@ -151,7 +159,12 @@ class Game {
   }
 
   moveSnake() {
+    this.#tailEraseFlag = true;
     this.#snake.move();
+    if (this.isFoodConsumed()) {
+      this.#snake.retainTail();
+      this.#tailEraseFlag = false;
+    }
   }
 
   isTailErasable() {

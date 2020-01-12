@@ -16,7 +16,7 @@
 --DONE-- * Change color of ghost snake
 
 
-* generate food
+--DONE-- generate food
 
 * Allow snake to eat food when food becomes available
 * Upon eating the food, snake should grow tall
