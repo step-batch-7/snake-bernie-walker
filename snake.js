@@ -75,6 +75,9 @@ class Snake {
   get pastTail() {
     return this.#previousTail;
   }
+  get head() {
+    return this.#positions[this.#positions.length - 1];
+  }
 
   turnLeft() {
     this.#direction.turnLeft();
@@ -118,19 +121,21 @@ class Game {
   #food;
   #height;
   #breadth;
+  #tailEraseFlag;
 
   constructor([breadth, height], snake, food) {
     this.#snake = snake;
     this.#height = height;
     this.#breadth = breadth;
     this.#food = food;
+    this.#tailEraseFlag = true;
   }
-  get snake() {
-    return this.#snake;
+  get snakeSchematics() {
+    return [this.#snake.location, this.#snake.species, this.#snake.pastTail];
   }
 
   get food() {
-    return this.#food;
+    return this.#food.location;
   }
 
   navigateSnake(dir) {
@@ -138,8 +143,19 @@ class Game {
     this.#snake[turnTo]();
   }
 
+  isFoodConsumed() {
+    return (
+      this.#snake.head[0] === this.#food.location[0] &&
+      this.#snake.head[1] === this.#food.location[1]
+    );
+  }
+
   moveSnake() {
     this.#snake.move();
+  }
+
+  isTailErasable() {
+    return this.#tailEraseFlag;
   }
 }
 
@@ -161,38 +177,42 @@ const createCell = function(grid, colId, rowId) {
   grid.appendChild(cell);
 };
 
-const eraseTail = function(snake) {
-  const [colId, rowId] = snake.pastTail;
-  const cell = getCell(colId, rowId);
-  cell.classList.remove(snake.species);
-};
-
-const drawFood = function(food) {
-  const [colId, rowId] = food.location;
+const drawFood = function([colId, rowId]) {
   const cell = getCell(colId, rowId);
   cell.classList.add('food');
 };
 
-const drawSnake = function(snake) {
-  snake.location.forEach(([colId, rowId]) => {
+const drawSnake = function(snakeBody, snakeType) {
+  snakeBody.forEach(([colId, rowId]) => {
     const cell = getCell(colId, rowId);
-    cell.classList.add(snake.species);
+    cell.classList.add(snakeType);
   });
 };
 
-const moveAndDrawSnake = function(game) {
-  game.moveSnake();
-  eraseTail(game.snake);
-  drawSnake(game.snake);
-};
-
-const reDrawBoard = function(game) {
-  moveAndDrawSnake(game);
+const eraseTail = function(snakePastTail, snakeType) {
+  const [colId, rowId] = snakePastTail;
+  const cell = getCell(colId, rowId);
+  cell.classList.remove(snakeType);
 };
 
 const drawBoard = function(game) {
-  drawSnake(game.snake);
+  const [snakeBody, snakeType, snakeTail] = game.snakeSchematics;
+
+  if (game.isFoodConsumed()) {
+    console.log('consumed');
+  }
+
+  if (game.isTailErasable()) {
+    eraseTail(snakeTail, snakeType);
+  }
+
+  drawSnake(snakeBody, snakeType);
   drawFood(game.food);
+};
+
+const reDrawBoard = function(game) {
+  game.moveSnake();
+  drawBoard(game);
 };
 
 const createGrids = function() {
@@ -246,7 +266,7 @@ const main = function() {
 
   const food = new Food([9, 9]);
 
-  const game = new Game([100, 60], snake, food);
+  const game = new Game([NUM_OF_COLS, NUM_OF_ROWS], snake, food);
 
   attachEventListeners(game);
 
