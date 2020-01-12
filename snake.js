@@ -130,13 +130,15 @@ class Game {
   #height;
   #breadth;
   #tailEraseFlag;
+  #prevFood;
 
   constructor([breadth, height], snake, food) {
     this.#snake = snake;
-    this.#height = height;
     this.#breadth = breadth;
+    this.#height = height;
     this.#food = food;
     this.#tailEraseFlag = true;
+    this.#prevFood = [];
   }
   get snakeSchematics() {
     return [this.#snake.location, this.#snake.species, this.#snake.pastTail];
@@ -144,6 +146,10 @@ class Game {
 
   get food() {
     return this.#food.location;
+  }
+
+  get prevFoodLocation() {
+    return this.#prevFood;
   }
 
   navigateSnake(dir) {
@@ -169,6 +175,13 @@ class Game {
 
   isTailErasable() {
     return this.#tailEraseFlag;
+  }
+
+  generateFood() {
+    this.#prevFood = this.#food.location;
+    const column = Math.floor(Math.random() * this.#breadth);
+    const row = Math.floor(Math.random() * this.#height);
+    this.#food.location = [column, row];
   }
 }
 
@@ -208,11 +221,17 @@ const eraseTail = function(snakePastTail, snakeType) {
   cell.classList.remove(snakeType);
 };
 
+const eraseFood = function([colId, rowId]) {
+  const cell = getCell(colId, rowId);
+  cell.classList.remove('food');
+};
+
 const drawBoard = function(game) {
   const [snakeBody, snakeType, snakeTail] = game.snakeSchematics;
 
   if (game.isFoodConsumed()) {
-    console.log('consumed');
+    game.generateFood();
+    eraseFood(game.prevFoodLocation);
   }
 
   if (game.isTailErasable()) {
