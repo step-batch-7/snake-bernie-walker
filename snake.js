@@ -178,6 +178,12 @@ class Game {
     return this.#tailEraseFlag;
   }
 
+  hasSnakeTouchedBody() {
+    return this.#snake.location
+      .slice(0, -1)
+      .some(bodyParts => areCoordinatesEqual(bodyParts, this.#snake.head));
+  }
+
   generateFood() {
     this.#prevFood = this.#food.location;
     const column = Math.floor(Math.random() * this.#breadth);
@@ -245,6 +251,7 @@ const drawBoard = function(game) {
 
 const reDrawBoard = function(game) {
   game.moveSnake();
+  console.log(game.hasSnakeTouchedBody());
   drawBoard(game);
 };
 
