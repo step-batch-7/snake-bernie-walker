@@ -28,13 +28,67 @@ class Direction {
     return this.#deltas[this.#heading];
   }
 
-  change(key) {
-    if (key == 'ArrowRight') {
-      this.#rotate();
+  right() {
+    const dirLookup = { 0: 1, 2: -1 };
+    const dir = dirLookup[this.#heading];
+
+    if (dir === undefined) {
+      return;
     }
 
-    if (key == 'ArrowLeft') {
-      this.#rotate(-1);
+    this.#rotate(dir);
+  }
+
+  left() {
+    const dirLookup = { 0: -1, 2: 1 };
+    const dir = dirLookup[this.#heading];
+
+    if (dir === undefined) {
+      return;
+    }
+
+    this.#rotate(dir);
+  }
+
+  up() {
+    const dirLookup = { 1: -1, 3: 1 };
+    const dir = dirLookup[this.#heading];
+
+    if (dir === undefined) {
+      return;
+    }
+
+    this.#rotate(dir);
+  }
+
+  down() {
+    const dirLookup = { 1: 1, 3: -1 };
+    const dir = dirLookup[this.#heading];
+
+    if (dir === undefined) {
+      return;
+    }
+
+    this.#rotate(dir);
+  }
+
+  change(key) {
+    switch (key) {
+      case 'ArrowRight':
+        this.right();
+        break;
+
+      case 'ArrowLeft':
+        this.left();
+        break;
+
+      case 'ArrowUp':
+        this.up();
+        break;
+
+      case 'ArrowDown':
+        this.down();
+        break;
     }
   }
 }
@@ -243,19 +297,21 @@ const drawBoard = function(game) {
 const startTheGame = function(game) {
   let interval;
 
-  const reDrawBoard = function(game) {
-    game.progressGame();
+  interval = setInterval(
+    game => {
+      game.progressGame();
 
-    if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
-      clearInterval(interval);
-      alert('Game Over');
-      return;
-    }
+      if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
+        clearInterval(interval);
+        alert('Game Over');
+        return;
+      }
 
-    drawBoard(game);
-  };
-
-  interval = setInterval(reDrawBoard, 200, game);
+      drawBoard(game);
+    },
+    200,
+    game
+  );
 };
 
 const createGrids = function() {
