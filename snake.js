@@ -187,9 +187,9 @@ class Game {
   hasSnakeCrossedBoundary() {
     return (
       this.#snake.head[0] < 0 ||
-      this.#snake.head[0] > this.#breadth ||
+      this.#snake.head[0] >= this.#breadth ||
       this.#snake.head[1] < 0 ||
-      this.#snake.head[1] > this.#height
+      this.#snake.head[1] >= this.#height
     );
   }
 
@@ -258,10 +258,22 @@ const drawBoard = function(game) {
   drawFood(game.food);
 };
 
-const reDrawBoard = function(game) {
-  game.moveSnake();
+const startTheGame = function(game) {
+  let interval;
 
-  drawBoard(game);
+  const reDrawBoard = function(game) {
+    game.moveSnake();
+
+    if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
+      clearInterval(interval);
+      alert('Game Over');
+      return;
+    }
+
+    drawBoard(game);
+  };
+
+  interval = setInterval(reDrawBoard, 200, game);
 };
 
 const createGrids = function() {
@@ -321,5 +333,5 @@ const main = function() {
 
   initBoard(game);
 
-  setInterval(reDrawBoard, 200, game);
+  startTheGame(game);
 };
