@@ -169,7 +169,7 @@ class Game {
     return areCoordinatesEqual(this.#snake.head, this.#food.location);
   }
 
-  moveSnake() {
+  progressGame() {
     this.#snake.move();
     if (this.isFoodConsumed()) {
       this.#snake.retainTail();
@@ -269,7 +269,7 @@ const startTheGame = function(game) {
   let interval;
 
   const reDrawBoard = function(game) {
-    game.moveSnake();
+    game.progressGame();
 
     if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
       clearInterval(interval);
