@@ -184,6 +184,15 @@ class Game {
       .some(bodyParts => areCoordinatesEqual(bodyParts, this.#snake.head));
   }
 
+  hasSnakeCrossedBoundary() {
+    return (
+      this.#snake.head[0] < 0 ||
+      this.#snake.head[0] > this.#breadth ||
+      this.#snake.head[1] < 0 ||
+      this.#snake.head[1] > this.#height
+    );
+  }
+
   generateFood() {
     this.#prevFood = this.#food.location;
     const column = Math.floor(Math.random() * this.#breadth);
@@ -251,7 +260,7 @@ const drawBoard = function(game) {
 
 const reDrawBoard = function(game) {
   game.moveSnake();
-  console.log(game.hasSnakeTouchedBody());
+
   drawBoard(game);
 };
 
