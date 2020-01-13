@@ -5,9 +5,17 @@ h1 {
 #grid {
   width: 800px;
   display: flex;
-  margin: 0 auto;
+  margin: 1% auto;
   flex-wrap: wrap;
   border: 1px solid black;
+}
+
+#scores {
+  width: 10%;
+  padding: 2px;
+  border: 1px solid;
+  margin: 1% auto;
+  text-align: center;
 }
 
 .cell {

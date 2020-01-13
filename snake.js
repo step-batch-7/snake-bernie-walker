@@ -133,16 +133,16 @@ class Game {
   #food;
   #height;
   #breadth;
-  #tailEraseFlag;
   #prevFood;
+  #points;
 
   constructor([breadth, height], snake, food) {
     this.#snake = snake;
     this.#breadth = breadth;
     this.#height = height;
     this.#food = food;
-    this.#tailEraseFlag = true;
     this.#prevFood = [];
+    this.#points = 0;
   }
   get snakeSchematics() {
     return [this.#snake.location, this.#snake.species, this.#snake.pastTail];
@@ -156,6 +156,10 @@ class Game {
     return this.#prevFood;
   }
 
+  get scores() {
+    return this.#points;
+  }
+
   navigateSnake(dir) {
     const turnTo = `turn${dir[0].toUpperCase() + dir.slice(1)}`;
     this.#snake[turnTo]();
@@ -166,16 +170,10 @@ class Game {
   }
 
   moveSnake() {
-    this.#tailEraseFlag = true;
     this.#snake.move();
     if (this.isFoodConsumed()) {
       this.#snake.retainTail();
-      this.#tailEraseFlag = false;
     }
-  }
-
-  isTailErasable() {
-    return this.#tailEraseFlag;
   }
 
   hasSnakeTouchedBody() {
@@ -198,6 +196,10 @@ class Game {
     const column = Math.floor(Math.random() * this.#breadth);
     const row = Math.floor(Math.random() * this.#height);
     this.#food.location = [column, row];
+  }
+
+  updateScore() {
+    this.#points += 3;
   }
 }
 
@@ -231,6 +233,11 @@ const drawSnake = function(snakeBody, snakeType) {
   });
 };
 
+const printScores = function(scores) {
+  const scoreBoard = document.getElementById('scores');
+  scoreBoard.innerText = scores;
+};
+
 const eraseTail = function(snakePastTail, snakeType) {
   const [colId, rowId] = snakePastTail;
   const cell = getCell(colId, rowId);
@@ -247,15 +254,15 @@ const drawBoard = function(game) {
 
   if (game.isFoodConsumed()) {
     game.generateFood();
+    game.updateScore();
     eraseFood(game.prevFoodLocation);
-  }
-
-  if (game.isTailErasable()) {
+  } else {
     eraseTail(snakeTail, snakeType);
   }
 
   drawSnake(snakeBody, snakeType);
   drawFood(game.food);
+  printScores(game.scores);
 };
 
 const startTheGame = function(game) {
