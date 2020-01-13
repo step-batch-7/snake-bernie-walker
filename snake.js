@@ -7,6 +7,7 @@ class Direction {
   #heading;
   #deltas;
   #rotate;
+  #changeDirection;
 
   constructor(initialHeading) {
     this.#heading = initialHeading;
@@ -22,74 +23,45 @@ class Direction {
       }
       this.#heading = (this.#heading + dir) % 4;
     };
+
+    this.#changeDirection = function(dirLookup) {
+      const dir = dirLookup.get(this.#heading);
+
+      if (!dir) return;
+
+      this.#rotate(dir);
+    };
   }
 
   get delta() {
     return this.#deltas[this.#heading];
   }
 
-  right() {
-    const dirLookup = { 0: 1, 2: -1 };
-    const dir = dirLookup[this.#heading];
-
-    if (dir === undefined) {
-      return;
-    }
-
-    this.#rotate(dir);
-  }
-
-  left() {
-    const dirLookup = { 0: -1, 2: 1 };
-    const dir = dirLookup[this.#heading];
-
-    if (dir === undefined) {
-      return;
-    }
-
-    this.#rotate(dir);
-  }
-
-  up() {
-    const dirLookup = { 1: -1, 3: 1 };
-    const dir = dirLookup[this.#heading];
-
-    if (dir === undefined) {
-      return;
-    }
-
-    this.#rotate(dir);
-  }
-
-  down() {
-    const dirLookup = { 1: 1, 3: -1 };
-    const dir = dirLookup[this.#heading];
-
-    if (dir === undefined) {
-      return;
-    }
-
-    this.#rotate(dir);
-  }
-
   change(key) {
-    switch (key) {
-      case 'ArrowRight':
-        this.right();
-        break;
+    const actionReferenceLookup = {
+      ArrowRight: new Map([
+        [NORTH, 1],
+        [SOUTH, -1]
+      ]),
+      ArrowLeft: new Map([
+        [NORTH, -1],
+        [SOUTH, 1]
+      ]),
+      ArrowUp: new Map([
+        [EAST, -1],
+        [WEST, 1]
+      ]),
+      ArrowDown: new Map([
+        [EAST, 1],
+        [WEST, -1]
+      ])
+    };
 
-      case 'ArrowLeft':
-        this.left();
-        break;
+    const actionReference = actionReferenceLookup[key];
 
-      case 'ArrowUp':
-        this.up();
-        break;
+    if (!actionReference) return;
 
-      case 'ArrowDown':
-        this.down();
-        break;
-    }
+    this.#changeDirection(actionReference);
   }
 }
 
