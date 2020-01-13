@@ -329,3 +329,5 @@ const main = function() {
 
   startTheGame(game);
 };
+
+window.onload = main;
