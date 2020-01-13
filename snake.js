@@ -124,6 +124,10 @@ class Food {
   }
 }
 
+const areCoordinatesEqual = (coordinate1, coordinate2) => {
+  return coordinate1[0] === coordinate2[0] && coordinate1[1] === coordinate2[1];
+};
+
 class Game {
   #snake;
   #food;
@@ -158,10 +162,7 @@ class Game {
   }
 
   isFoodConsumed() {
-    return (
-      this.#snake.head[0] === this.#food.location[0] &&
-      this.#snake.head[1] === this.#food.location[1]
-    );
+    return areCoordinatesEqual(this.#snake.head, this.#food.location);
   }
 
   moveSnake() {
