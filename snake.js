@@ -1,11 +1,12 @@
-const EAST = 0;
-const NORTH = 1;
-const WEST = 2;
-const SOUTH = 3;
+const NORTH = 0;
+const EAST = 1;
+const SOUTH = 2;
+const WEST = 3;
 
 class Direction {
   #heading;
   #deltas;
+  #rotate;
 
   constructor(initialHeading) {
     this.#heading = initialHeading;
@@ -14,39 +15,26 @@ class Direction {
     this.#deltas[WEST] = [-1, 0];
     this.#deltas[NORTH] = [0, -1];
     this.#deltas[SOUTH] = [0, 1];
+
+    this.#rotate = function(dir = 1) {
+      if (dir == -1) {
+        this.#heading += 4;
+      }
+      this.#heading = (this.#heading + dir) % 4;
+    };
   }
 
   get delta() {
     return this.#deltas[this.#heading];
   }
 
-  turnLeft() {
-    this.#heading = (this.#heading + 1) % 4;
-  }
-
-  turnRight() {
-    for (let turn = 0; turn < 3; turn++) {
-      this.turnLeft();
-    }
-  }
-
-  turnUp() {
-    if (this.#heading == EAST) {
-      this.turnLeft();
+  change(key) {
+    if (key == 'ArrowRight') {
+      this.#rotate();
     }
 
-    if (this.#heading == WEST) {
-      this.turnRight();
-    }
-  }
-
-  turnDown() {
-    if (this.#heading == EAST) {
-      this.turnRight();
-    }
-
-    if (this.#heading == WEST) {
-      this.turnLeft();
+    if (key == 'ArrowLeft') {
+      this.#rotate(-1);
     }
   }
 }
@@ -79,20 +67,8 @@ class Snake {
     return this.#positions[this.#positions.length - 1];
   }
 
-  turnLeft() {
-    this.#direction.turnLeft();
-  }
-
-  turnRight() {
-    this.#direction.turnRight();
-  }
-
-  turnUp() {
-    this.#direction.turnUp();
-  }
-
-  turnDown() {
-    this.#direction.turnDown();
+  turn(key) {
+    this.#direction.change(key);
   }
 
   move() {
@@ -160,9 +136,8 @@ class Game {
     return this.#points;
   }
 
-  navigateSnake(dir) {
-    const turnTo = `turn${dir[0].toUpperCase() + dir.slice(1)}`;
-    this.#snake[turnTo]();
+  navigateSnake(key) {
+    this.#snake.turn(key);
   }
 
   isFoodConsumed() {
@@ -298,23 +273,7 @@ const initBoard = function(game) {
 };
 
 const handleKeyPress = game => {
-  switch (event.key) {
-    case 'ArrowLeft':
-      game.navigateSnake('left');
-      break;
-
-    case 'ArrowRight':
-      game.navigateSnake('right');
-      break;
-
-    case 'ArrowUp':
-      game.navigateSnake('up');
-      break;
-
-    case 'ArrowDown':
-      game.navigateSnake('down');
-      break;
-  }
+  game.navigateSnake(event.key);
 };
 
 const attachEventListeners = game => {
