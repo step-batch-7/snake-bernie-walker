@@ -39,19 +39,19 @@ class Direction {
 
   change(key) {
     const actionReferenceLookup = {
-      ArrowRight: new Map([
+      toRight: new Map([
         [NORTH, 1],
         [SOUTH, -1]
       ]),
-      ArrowLeft: new Map([
+      toLeft: new Map([
         [NORTH, -1],
         [SOUTH, 1]
       ]),
-      ArrowUp: new Map([
+      toUp: new Map([
         [EAST, -1],
         [WEST, 1]
       ]),
-      ArrowDown: new Map([
+      toDown: new Map([
         [EAST, 1],
         [WEST, -1]
       ])
