@@ -37,7 +37,7 @@ class Snake {
   hasTouchedBody() {
     return this.#positions
       .slice(0, -1)
-      .some(bodyParts => areCoordinatesEqual(bodyParts, this.head));
+      .some(bodyParts => this.isHeadAt(bodyParts));
   }
 
   turn(action) {
