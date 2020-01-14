@@ -56,7 +56,7 @@ const drawBoard = function(game) {
   }
 
   drawSnake(snakeBody, snakeType);
-  drawFood(game.food);
+  drawFood(game.foodLocation);
   printScores(game.scores);
 };
 

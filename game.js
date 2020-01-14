@@ -1,7 +1,3 @@
-const areCoordinatesEqual = (coordinate1, coordinate2) => {
-  return coordinate1[0] === coordinate2[0] && coordinate1[1] === coordinate2[1];
-};
-
 class Game {
   #snake;
   #food;
@@ -19,7 +15,7 @@ class Game {
     this.#points = 0;
   }
 
-  get food() {
+  get foodLocation() {
     return this.#food.location;
   }
 
@@ -35,12 +31,16 @@ class Game {
     return [this.#snake.location, this.#snake.species, this.#snake.pastTail];
   }
 
-  navigateSnake(action) {
-    this.#snake.turn(action);
+  isFoodConsumed() {
+    return this.#snake.isHeadAt(this.#food.location);
   }
 
-  isFoodConsumed() {
-    return areCoordinatesEqual(this.#snake.head, this.#food.location);
+  hasSnakeTouchedBody() {
+    return this.#snake.hasTouchedBody();
+  }
+
+  navigateSnake(action) {
+    this.#snake.turn(action);
   }
 
   progressGame() {
@@ -48,12 +48,6 @@ class Game {
     if (this.isFoodConsumed()) {
       this.#snake.retainTail();
     }
-  }
-
-  hasSnakeTouchedBody() {
-    return this.#snake.location
-      .slice(0, -1)
-      .some(bodyParts => areCoordinatesEqual(bodyParts, this.#snake.head));
   }
 
   hasSnakeCrossedBoundary() {
