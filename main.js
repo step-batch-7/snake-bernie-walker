@@ -60,6 +60,12 @@ const drawBoard = function(game) {
   printScores(game.scores);
 };
 
+const printGameSummary = function(scores) {
+  document.querySelector('#board').classList.add('hide');
+  document.querySelector('#game-summary').innerText = `Your Score: ${scores}`;
+  document.querySelector('#finish-prompt').classList.remove('hide');
+};
+
 const startTheGame = function(game) {
   let interval;
 
@@ -69,7 +75,7 @@ const startTheGame = function(game) {
 
       if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
         clearInterval(interval);
-        alert('Game Over');
+        printGameSummary(game.scores);
         return;
       }
 
@@ -106,6 +112,8 @@ const handleKeyPress = game => {
 
 const attachEventListeners = game => {
   document.body.onkeydown = handleKeyPress.bind(null, game);
+  document.querySelector('#continue-button').onclick = () =>
+    window.location.reload();
 };
 
 const main = function() {
