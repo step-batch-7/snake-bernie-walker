@@ -73,7 +73,7 @@ const startTheGame = function(game) {
     game => {
       game.progressGame();
 
-      if (game.hasSnakeTouchedBody() || game.hasSnakeCrossedBoundary()) {
+      if (game.isOver()) {
         clearInterval(interval);
         printGameSummary(game.scores);
         return;

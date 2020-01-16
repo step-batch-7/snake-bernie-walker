@@ -35,10 +35,6 @@ class Game {
     return this.#snake.isHeadAt(this.#food.location);
   }
 
-  hasSnakeTouchedBody() {
-    return this.#snake.hasTouchedBody();
-  }
-
   navigateSnake(action) {
     this.#snake.turn(action);
   }
@@ -50,8 +46,9 @@ class Game {
     }
   }
 
-  hasSnakeCrossedBoundary() {
+  isOver() {
     return (
+      this.#snake.hasTouchedBody() ||
       this.#snake.head[0] < 0 ||
       this.#snake.head[0] >= this.#breadth ||
       this.#snake.head[1] < 0 ||
