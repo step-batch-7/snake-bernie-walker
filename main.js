@@ -116,7 +116,7 @@ const attachEventListeners = game => {
     window.location.reload();
 };
 
-const main = function() {
+const createNewGame = function() {
   const snake = new Snake(
     [
       [40, 25],
@@ -129,7 +129,11 @@ const main = function() {
 
   const food = new Food([9, 9]);
 
-  const game = new Game([NUM_OF_COLS, NUM_OF_ROWS], snake, food);
+  return new Game([NUM_OF_COLS, NUM_OF_ROWS], snake, food);
+};
+
+const main = function() {
+  const game = createNewGame();
 
   attachEventListeners(game);
 
