@@ -6,15 +6,15 @@ const GRID_ID = 'grid';
 const getGrid = () => document.getElementById(GRID_ID);
 const getCellId = (colId, rowId) => colId + '_' + rowId;
 
-const getCell = (colId, rowId) =>
-  document.getElementById(getCellId(colId, rowId));
-
 const createCell = function(grid, colId, rowId) {
   const cell = document.createElement('div');
   cell.className = 'cell';
   cell.id = getCellId(colId, rowId);
   grid.appendChild(cell);
 };
+
+const getCell = (colId, rowId) =>
+  document.getElementById(getCellId(colId, rowId));
 
 const draw = function([colId, rowId], toDraw) {
   const cell = getCell(colId, rowId);
