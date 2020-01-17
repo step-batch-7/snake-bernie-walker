@@ -16,16 +16,13 @@ const createCell = function(grid, colId, rowId) {
   grid.appendChild(cell);
 };
 
-const drawFood = function([colId, rowId], foodType) {
+const draw = function([colId, rowId], toDraw) {
   const cell = getCell(colId, rowId);
-  cell.classList.add(foodType);
+  cell.classList.add(toDraw);
 };
 
 const drawSnake = function(snakeBody, snakeType) {
-  snakeBody.forEach(([colId, rowId]) => {
-    const cell = getCell(colId, rowId);
-    cell.classList.add(snakeType);
-  });
+  snakeBody.forEach(part => draw(part, snakeType));
 };
 
 const printScores = function(scores) {
@@ -52,7 +49,7 @@ const drawBoard = function(game) {
   }
 
   drawSnake(snakeBody, snakeType);
-  drawFood(foodLocation, foodType);
+  draw(foodLocation, foodType);
   printScores(game.scores);
 };
 
