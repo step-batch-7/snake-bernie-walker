@@ -33,15 +33,9 @@ const printScores = function(scores) {
   scoreBoard.innerText = scores;
 };
 
-const eraseTail = function(snakePastTail, snakeType) {
-  const [colId, rowId] = snakePastTail;
+const erase = function([colId, rowId], toErase) {
   const cell = getCell(colId, rowId);
-  cell.classList.remove(snakeType);
-};
-
-const eraseFood = function([colId, rowId], foodType) {
-  const cell = getCell(colId, rowId);
-  cell.classList.remove(foodType);
+  cell.classList.remove(toErase);
 };
 
 const drawBoard = function(game) {
@@ -52,9 +46,9 @@ const drawBoard = function(game) {
     game.generateFood();
     [foodLocation, foodType, prevFoodLocation] = game.getFoodSchematics();
     game.updateScore();
-    eraseFood(prevFoodLocation, foodType);
+    erase(prevFoodLocation, foodType);
   } else {
-    eraseTail(snakeTail, snakeType);
+    erase(snakeTail, snakeType);
   }
 
   drawSnake(snakeBody, snakeType);
