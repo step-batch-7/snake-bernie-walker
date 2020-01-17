@@ -15,16 +15,16 @@ class Game {
     this.#points = 0;
   }
 
-  get foodLocation() {
-    return this.#food.location;
-  }
-
   get prevFoodLocation() {
     return this.#prevFood;
   }
 
   get scores() {
     return this.#points;
+  }
+
+  getFoodSchematics() {
+    return [this.#food.location, this.#food.type, this.#prevFood];
   }
 
   getSnakeSchematics() {

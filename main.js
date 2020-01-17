@@ -16,9 +16,9 @@ const createCell = function(grid, colId, rowId) {
   grid.appendChild(cell);
 };
 
-const drawFood = function([colId, rowId]) {
+const drawFood = function([colId, rowId], foodType) {
   const cell = getCell(colId, rowId);
-  cell.classList.add('food');
+  cell.classList.add(foodType);
 };
 
 const drawSnake = function(snakeBody, snakeType) {
@@ -39,24 +39,26 @@ const eraseTail = function(snakePastTail, snakeType) {
   cell.classList.remove(snakeType);
 };
 
-const eraseFood = function([colId, rowId]) {
+const eraseFood = function([colId, rowId], foodType) {
   const cell = getCell(colId, rowId);
-  cell.classList.remove('food');
+  cell.classList.remove(foodType);
 };
 
 const drawBoard = function(game) {
   const [snakeBody, snakeType, snakeTail] = game.getSnakeSchematics();
+  let [foodLocation, foodType] = game.getFoodSchematics();
 
   if (game.isFoodConsumed()) {
     game.generateFood();
+    [foodLocation, foodType, prevFoodLocation] = game.getFoodSchematics();
     game.updateScore();
-    eraseFood(game.prevFoodLocation);
+    eraseFood(prevFoodLocation, foodType);
   } else {
     eraseTail(snakeTail, snakeType);
   }
 
   drawSnake(snakeBody, snakeType);
-  drawFood(game.foodLocation);
+  drawFood(foodLocation, foodType);
   printScores(game.scores);
 };
 
@@ -127,7 +129,7 @@ const createNewGame = function() {
     'snake'
   );
 
-  const food = new Food([9, 9]);
+  const food = new Food([9, 9], 'regular');
 
   return new Game([NUM_OF_COLS, NUM_OF_ROWS], snake, food);
 };
