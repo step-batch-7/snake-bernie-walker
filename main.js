@@ -4,7 +4,7 @@ const NUM_OF_ROWS = 60;
 const GRID_ID = 'grid';
 
 const getGrid = () => document.getElementById(GRID_ID);
-const getCellId = (colId, rowId) => colId + '_' + rowId;
+const getCellId = (colId, rowId) => `c${colId}_${rowId}`;
 
 const createCell = function(grid, colId, rowId) {
   const cell = document.createElement('div');
